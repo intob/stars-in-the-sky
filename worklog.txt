@@ -1,0 +1,19 @@
+Stars in the Sky - Work Log
+
+2018-09-25 10:45 START. Revised HTML5 canvas.
+2018-09-25 11:00 Draw star on black background.
+2018-09-25 11:10 Create star & universe classes.
+2018-09-25 11:30 STOP.
+2018-09-25 13:30 START. Write functions to draw universe.
+2018-09-25 15:30 Periodically create stars with random lifespan.
+2018-09-25 16:00 STOP.
+2018-09-25 18:00 START. Save stars object in local storage.
+2018-09-25 19:00 STOP.
+2018-09-25 20:40 START. Fixed isAlive property of star (did not add current milliseconds to lifespan when comparing dates).
+2018-09-25 21:40 Fixed JS quirk that caused incorrect evaluation of isAlive property.
+2018-09-25 21:45 Detect hover over star and display it’s properties.
+2018-09-26 00:10 STOP.
+2018-09-27 15:00 START. Look at NodeJS & make test HTTP servers.
+2018-09-27 16:00 STOP.
+2018-09-28 08:30 START. Write new version of stars-in-the-sky using NodeJS & sockets.
+2018-09-28 11:30 STOP.

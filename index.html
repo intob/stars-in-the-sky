@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Stars in the Sky</title>
+    <style>
+      html, body { margin: 0; padding: 0; font-family: sans-serif; }
+      canvas { position: absolute; width: 100vw; height: 100vh; }
+      #hudInfo { position: absolute; padding: 5px; color: white; }
+    </style>
+  </head>
+  <body>
+    <canvas id='starCanvas'></canvas>
+    <canvas id='hudCanvas'></canvas>
+    <div id='hudInfo'>
+      <div id='clientId'></div>
+      <div id='starName'></div>
+      <div id='starClientId'></div>
+      <div id='starXPos'></div>
+      <div id='starYPos'></div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const creationInterval = 200; // interval of star creation in ms
+      const redrawInterval = 100; // interval of redraw to hide dead stars in ms
+      const maxStarLifespan = 60000; // max life of a star in ms
+      const maxStarRadius = 8;
+      const maxStarGlow = 8;
+      const nameCharset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const nameLength = 4;
+
+      class Star {
+        constructor (xMax, yMax, clientId, color) {
+          // random position
+          this.x = Math.floor((Math.random() * xMax) + 1);
+          this.y = Math.floor((Math.random() * yMax) + 1);
+
+          // random radius (1 to 3)
+          this.radius = Math.floor((Math.random() * maxStarRadius) + 1);
+
+          // lifespan of 1 to 2000ms (~1s average)
+          this.lifespan = Math.floor((Math.random() * maxStarLifespan) + 1);
+
+          // ammount of shadowBlur to draw
+          this.glow = Math.floor((Math.random() * maxStarGlow) + 1);
+
+          this.date = new Date();
+          this.name = this.makeName();
+          this.clientId = clientId;
+          this.color = color;
+        }
+
+        makeName() {
+          let name = '';
+          for(let i = 0; i < nameLength; i++) {
+            name += nameCharset.charAt(Math.floor(Math.random() * nameCharset.length));
+          }
+          return name;
+        }
+      }
+
+      class Universe {
+        constructor(ctx, xMax, yMax, clientId, color) {
+          this.ctx = ctx;
+          this.xMax = xMax;
+          this.yMax = yMax;
+          this.clientId = clientId;
+          this.color = color;
+          this.stars = [];
+          this.draw();
+        }
+
+        drawSpace() {
+          this.ctx.fillStyle = 'black';
+          this.ctx.fillRect(0, 0, this.xMax, this.yMax);
+        }
+
+        drawStar(star) {
+          for(let i = star.glow; i > 0; i--) {
+            this.ctx.shadowBlur = i * star.radius;
+            this.ctx.shadowColor = star.color;
+            this.ctx.fillStyle = star.color;
+            this.ctx.beginPath();
+            this.ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+            this.ctx.fill();
+          }
+        }
+
+        createStar() {
+          let star = new Star(this.xMax, this.yMax, this.clientId, this.color);
+          return star;
+        }
+
+        isStarAlive(star) {
+          // check if lifespan has elapsed
+          let date = new Date(star.date);
+          return date.setMilliseconds(date.getMilliseconds() + star.lifespan) > Date.now();
+        }
+
+        draw() {
+          this.drawSpace();
+          if(this.stars && this.stars.length > 0) {
+            for(let star of this.stars) {
+              if(this.isStarAlive(star) === false) {
+                this.stars.splice(star, 1);
+              } else {
+                this.drawStar(star);
+              }
+            }
+          }
+        }
+
+        getClosestStar(x, y) {
+          let bestMatch = null;
+          for(let star of this.stars) {
+            let dX = (x > star.x ? x - star.x : star.x - x);
+            let dY = (y > star.y ? y - star.y : star.y - y);
+            let distance = Math.sqrt((dX * dX) + (dY * dY));
+            // check distance is less than previous closest, or if it's the first
+            if ((bestMatch && distance < bestMatch.distance) || !bestMatch) {
+              bestMatch = { distance: distance, star: star};
+            }
+          }
+          return bestMatch.star;
+        }
+      }
+
+      function drawPathToStar(ctx, x, y, star) {
+        ctx.strokeStyle = 'white';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(star.x, star.y);
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      function init() {
+        var socket = io(); // using socket.io
+
+        let xMax = window.innerWidth;
+        let yMax = window.innerHeight;
+
+        let starCanvas = document.getElementById('starCanvas');
+        starCanvas.width = xMax;
+        starCanvas.height = yMax;
+        let starContext = starCanvas.getContext('2d');
+
+        let hudCanvas = document.getElementById('hudCanvas');
+        hudCanvas.width = xMax;
+        hudCanvas.height = yMax;
+        let hudContext = hudCanvas.getContext('2d');
+
+        let clientId = document.getElementById('clientId');
+        let starName = document.getElementById('starName');
+        let starClientId = document.getElementById('starClientId');
+        let starXPos = document.getElementById('starXPos');
+        let starYPos = document.getElementById('starYPos');
+
+        // initial data from server
+        socket.on('init', function(data) {
+          clientId.innerHTML = 'My Id: #' + data.clientId;
+          clientId.style.color = data.color;
+
+          let universe = new Universe(starContext, xMax, yMax, data.clientId, data.color);
+
+          universe.stars = data.stars;
+
+          // periodically create new stars
+          setInterval(function() {
+            var newStar = universe.createStar();
+            socket.emit('star', newStar);
+          }, creationInterval);
+
+          // periodically redraw to hide dead stars
+          setInterval(function() {
+            universe.draw();
+          }, redrawInterval);
+
+          // handle new stars
+          socket.on('star', function(star){
+            universe.stars.push(star);
+          });
+
+          // handle pointer move, update HUD info
+          window.addEventListener('mousemove', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            // throttle
+            window.requestAnimationFrame(function() {
+              let mouseX = parseInt(event.clientX);
+              let mouseY = parseInt(event.clientY);
+              let closestStar = universe.getClosestStar(mouseX, mouseY);
+              // clear HUD lines
+              hudContext.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
+              // draw new line
+              drawPathToStar(hudContext, mouseX, mouseY, closestStar);
+              // update info
+              starName.innerHTML = 'Star name: ' + closestStar.name;
+              starClientId.innerHTML = 'Star owner: #' + closestStar.clientId;
+              starXPos.innerHTML = 'Star X: ' + closestStar.x;
+              starYPos.innerHTML = 'Star Y: ' + closestStar.y;
+            });
+          });
+        });
+      }
+
+      init();
+    </script>
+  </body>
+</html>
