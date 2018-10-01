@@ -2,7 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-const starCheckInterval = 1000; // interval between checking life of stars in ms
+const starCheckInterval = 500; // interval between checking life of stars in ms
 let stars = [];
 let nextClientId = 1;
 
