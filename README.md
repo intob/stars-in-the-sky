@@ -1,6 +1,7 @@
 Stars in the Sky - README
 
-Visualisation of randomly generated stars from each connected client.
+Visualisation of randomly generated stars from each connected client. Each star is saved on the server for it's lifespan. Saved stars are sent to the client on connection.
+
 Using NodeJS, Express & Socket.io.
 
 Dependencies:
@@ -14,4 +15,4 @@ Setup:
 
 Notes:
 - server.js specifies port 3000.
-- alternatively, check the deployed version: https://stars-in-the-sky-jumbqsqnqa.now.sh/
+- alternatively, check the deployed version: https://stars-in-the-sky-jumbqsqnqa.now.sh
