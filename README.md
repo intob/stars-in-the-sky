@@ -15,4 +15,4 @@ Setup:
 
 Notes:
 - server.js specifies port 3000.
-- alternatively, check the deployed version: https://stars-in-the-sky-jumbqsqnqa.now.sh
+- alternatively, check the deployed version: https://stars-in-the-sky-mbyhmnciug.now.sh
