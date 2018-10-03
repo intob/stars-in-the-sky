@@ -1,6 +1,6 @@
 Stars in the Sky - Work Log
 
-2018-09-25 10:45 START. Revised HTML5 canvas.
+2018-09-25 10:45 START. Revise HTML5 canvas.
 2018-09-25 11:00 Draw star on black background.
 2018-09-25 11:10 Create star & universe classes.
 2018-09-25 11:30 STOP.
@@ -9,11 +9,18 @@ Stars in the Sky - Work Log
 2018-09-25 16:00 STOP.
 2018-09-25 18:00 START. Save stars object in local storage.
 2018-09-25 19:00 STOP.
-2018-09-25 20:40 START. Fixed isAlive property of star (did not add current milliseconds to lifespan when comparing dates).
-2018-09-25 21:40 Fixed JS quirk that caused incorrect evaluation of isAlive property.
-2018-09-25 21:45 Detect hover over star and display it’s properties.
-2018-09-26 00:10 STOP.
+2018-09-25 20:40 START. Fix isAlive property of star (did not add current milliseconds to lifespan when comparing dates).
+2018-09-25 21:00 Detect hover over star and display it’s properties.
+2018-09-25 21:40 STOP.
 2018-09-27 15:00 START. Look at NodeJS & make test HTTP servers.
 2018-09-27 16:00 STOP.
 2018-09-28 08:30 START. Write new version of stars-in-the-sky using NodeJS & sockets.
 2018-09-28 11:30 STOP.
+2018-10-03 10:30 START. Research MongoDB & create local test, reading & writing data.
+2018-10-03 11:15 Create MongoDB instance on mLab so you don't need to install it locally.
+2018-10-03 11:25 Start inserting created stars into a DB collection.
+2018-10-03 11:45 Return living saved stars to client on connection.
+2018-10-03 12:00 STOP.
+2018-10-03 13:00 START. Save clients in DB to ensure each connection is given a unique client.
+2018-10-03 13:30 Testing & tweaking.
+2018-10-03 14:20 STOP.

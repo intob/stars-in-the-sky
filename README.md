@@ -1,8 +1,8 @@
 Stars in the Sky - README
 
-Visualisation of randomly generated stars from each connected client. Each star is saved on the server for it's lifespan. Saved stars are sent to the client on connection.
+Visualisation of randomly generated stars from each connected client. Each star is saved in a MongoDB. On client connection living stars are sent to the client, and dead stars are removed from the DB.
 
-Using NodeJS, Express & Socket.io.
+Using NodeJS, Express, Socket.io & MongoDB.
 
 Dependencies:
 - Node & npm https://nodejs.org/

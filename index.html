@@ -13,7 +13,7 @@
     <canvas id='hudCanvas'></canvas>
     <div id='hudInfo'>
       <div id='clientId'></div>
-      <div id='starName'></div>
+      <div id='starId'></div>
       <div id='starClientId'></div>
       <div id='starXPos'></div>
       <div id='starYPos'></div>
@@ -23,10 +23,8 @@
       const creationInterval = 200; // interval of star creation in ms
       const redrawInterval = 100; // interval of redraw to hide dead stars in ms
       const maxStarLifespan = 120000; // max life of a star in ms
-      const maxStarRadius = 6;
-      const maxStarGlow = 8;
-      const nameCharset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      const nameLength = 4;
+      const maxStarRadius = 4;
+      const maxStarGlow = 6;
 
       class Star {
         constructor (xMax, yMax, clientId, color) {
@@ -44,17 +42,8 @@
           this.glow = Math.floor((Math.random() * maxStarGlow) + 1);
 
           this.date = new Date();
-          this.name = this.makeName();
           this.clientId = clientId;
           this.color = color;
-        }
-
-        makeName() {
-          let name = '';
-          for(let i = 0; i < nameLength; i++) {
-            name += nameCharset.charAt(Math.floor(Math.random() * nameCharset.length));
-          }
-          return name;
         }
       }
 
@@ -150,7 +139,7 @@
         let hudContext = hudCanvas.getContext('2d');
 
         let clientId = document.getElementById('clientId');
-        let starName = document.getElementById('starName');
+        let starId = document.getElementById('starId');
         let starClientId = document.getElementById('starClientId');
         let starXPos = document.getElementById('starXPos');
         let starYPos = document.getElementById('starYPos');
@@ -194,7 +183,7 @@
               // draw new line
               drawPathToStar(hudContext, mouseX, mouseY, closestStar);
               // update info
-              starName.innerHTML = 'Star name: ' + closestStar.name;
+              starId.innerHTML = 'Star Id: #' + closestStar._id;
               starClientId.innerHTML = 'Star owner: #' + closestStar.clientId;
               starXPos.innerHTML = 'Star X: ' + closestStar.x;
               starYPos.innerHTML = 'Star Y: ' + closestStar.y;

@@ -1,9 +1,10 @@
 {
   "name": "stars-in-the-sky",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Visualisation of randomly generated stars from each connected client.",
   "dependencies": {
     "express": "^4.15.2",
+    "mongodb": "^3.1.6",
     "socket.io": "^2.1.1"
   }
 }
