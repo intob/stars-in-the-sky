@@ -41,6 +41,7 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, dbClient) {
       starCollection.insertOne(star, function(err, res) {
         if(err) throw err;
         star._id = res.insertedId;
+        // push star to clients
         io.emit('star', star);
       });
     });
@@ -55,17 +56,6 @@ MongoClient.connect(url, { useNewUrlParser: true }, function(err, dbClient) {
   });
 
 });
-
-/*
-// periodically remove dead stars
-setInterval(function() {
-  for(let star of stars) {
-    if(isStarAlive(star) === false) {
-      stars.splice(star, 1);
-    }
-  }
-}, starCheckInterval);
-*/
 
 function createClient(collection, callback) {
   let newClient = { color: getRandomColor() };
