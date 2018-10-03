@@ -8,7 +8,7 @@ let url = "mongodb://iamastar:15QckoMU8KsC@ds219983.mlab.com:19983/stars-in-the-
 MongoClient.connect(url, { useNewUrlParser: true }, function(err, dbClient) {
   if(err) throw err;
 
-  let db = dbClient.db('stars-in-the-sky')
+  let db = dbClient.db('stars-in-the-sky');
   let starCollection = db.collection('stars');
   let clientCollection = db.collection('clients');
 
